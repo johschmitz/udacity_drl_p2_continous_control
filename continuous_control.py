@@ -4,17 +4,18 @@ import numpy as np
 from collections import deque
 import matplotlib.pyplot as plt
 import time
+import os
 
 from unityagents import UnityEnvironment
-from ddpg_agent import Agent
 import torch
+from ddpg_agent import Agent
 
 # Set to True if you want to (re)run the training or False to just watch the trained agent in action
-train_now = True
+train_now = False
 
 # Initialize Unity environment with 1 or 20 agents
-#env = UnityEnvironment(file_name='/home/schmitz/work/deep-reinforcement-learning/p2_continuous-control/solution/Reacher_1_Linux/Reacher.x86_64')
-env = UnityEnvironment(file_name='/home/schmitz/work/deep-reinforcement-learning/p2_continuous-control/solution/Reacher_20_Linux/Reacher.x86_64')
+#env = UnityEnvironment(file_name=os.path.join(os.getcwd(),'Reacher_1_Linux/Reacher.x86_64'))
+env = UnityEnvironment(file_name=os.path.join(os.getcwd(),'Reacher_20_Linux/Reacher.x86_64'))
 
 # Get the default brain
 brain_name = env.brain_names[0]
@@ -43,9 +44,12 @@ agent = Agent(state_size=state_size, action_size=action_size, random_seed=0)
 # Train the agent with DDPG
 if train_now:
     n_episodes=200
+    average_len=100
     print_every=10
-    scores_deque = deque(maxlen=print_every)
+    scores_deque = deque(maxlen=average_len)
     scores = []
+    solved = False
+    average_score_max = 0
     # Train for n_episodes
     for i_episode in range(1, n_episodes+1):
         env_info = env.reset(train_mode=True)[brain_name]
@@ -76,11 +80,17 @@ if train_now:
         # Check and track scores
         scores_deque.append(score)
         scores.append(score)
-        print('\rEpisode {}\tAverage Score: {:.2f}\tScore: {:.2f}'.format(i_episode, np.mean(scores_deque), score), end="")
+        average_score = np.mean(scores_deque)
+        print('\rEpisode {}\tAverage Score: {:.2f}\tScore: {:.2f}'.format(i_episode, average_score, score), end="")
         if i_episode % print_every == 0:
-            print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)))
-            # Save coefficients to file but only if results are really good
-            if np.mean(scores_deque) >= 36:
+            print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, average_score))
+        # Save coefficients to file if environment is solved with current network coefficients
+        if average_score >= 30:
+            if not solved:
+                solved = True
+                print('Environment solved after {} episodes.'.format(i_episode))
+            if average_score > average_score_max:
+                average_score_max = average_score
                 torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
                 torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
 

@@ -30,9 +30,22 @@ I also stored the data samples into the replay buffer. Afterwards I found that
 
 was the key to a successful training.
 
-I then got a successful training result as seen in the plot below with the
-environment being solved after about 100 Episodes. After some more episodes a
-maximum average score of about 36 was reached.
+The network architectures of the submitted actor and critic networks is as follows:
+
+Actor network
+- Layer1: Linear + BatchNorm1d, input width:33, output width: 256, activation: ReLu
+- Layer2: Linear, input width: 256, output width: 128, activation: ReLu
+- Layer3: Linear, input width: 128, output width: 4, activation: tanh
+
+Critic network:
+- Layer1: Linear + BatchNorm1d, input width: 33, output width: 256, activation: ReLu
+- Layer2: Linear, input width: 256 + 33, output width: 128, activation: ReLu
+- Layer3: Linear, input width: 128 output width: 1, activation: tanh
+
+With this I got a successful training result as seen in the plot below with the
+environment being solved after 140 Episodes (average score of last 100 episodes
+above 30). After some more episodes a maximum average score of about 35 was
+reached.
 
 ![Training scores][training_scores]
 

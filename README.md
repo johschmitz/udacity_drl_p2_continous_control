@@ -8,8 +8,8 @@
 
 For this project, I trained an agent to move a robotic arm with two joints and
 make the gripper at the end stay in a moving target volume. The world can be
-visualized in a Unity application. The agent is based on the PPO deep neural
-network architecture.
+visualized in a Unity application. The agent is based on the actor critic deep
+neural network architecture.
 
 ![Robotic arm environment][robotic_arm_environment]
 
@@ -46,7 +46,8 @@ agent must get an average score of +30 over 100 consecutive episodes.
         - Windows (64-bit): [click here](https://s3-us-west-1.amazonaws.com/udacity-drlnd/P2/Reacher/Reacher_Windows_x86_64.zip)
 
 2. Extract it to a subdirectory.
-3. Update the path to the executable in the Jupyter notebook.
+3. Update the path to the executable in the
+   [continuous_control.py](continuous_control.py) Python script.
 
 ### Python dependencies
 
